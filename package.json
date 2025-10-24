@@ -2,10 +2,10 @@
     "name": "stack-tabs",
     "displayName": "stack-tabs",
     "description": "Keeps the most used tabs on the far left.",
-    "version": "0.0.2",
-    "publisher": "kylepaulsen",
+    "version": "0.1.0",
+    "publisher": "isplasher",
     "author": {
-        "name": "Kyle Paulsen"
+        "name": "iSplasher"
     },
     "icon": "icon.png",
     "license": "MIT",
@@ -13,11 +13,11 @@
         "vscode": "^1.11.0"
     },
     "repository": {
-        "url": "https://github.com/kylepaulsen/vscode-stack-tabs.git",
+        "url": "https://github.com/isplasher-forks/vscode-stack-tabs.git",
         "type": "git"
     },
     "bugs": {
-        "url": "https://github.com/kylepaulsen/vscode-stack-tabs/issues"
+        "url": "https://github.com/isplasher-forks/vscode-stack-tabs/issues"
     },
     "categories": [
         "Other"
@@ -25,22 +25,33 @@
     "activationEvents": [
         "*"
     ],
-    "main": "./extension",
+    "main": "./out/extension.js",
     "contributes": {
         "commands": [{
             "command": "stackTabs.stackTab",
             "title": "StackTabs: Move tab to the far left"
+        },
+        {
+            "command": "isplasher.stackTabs.stackTab",
+            "title": "StackTabs: Move tab to the far left"
         }]
     },
     "scripts": {
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "node ./node_modules/vscode/bin/test"
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "lint": "eslint",
+        "watch": "tsc -watch -p ./"
     },
     "devDependencies": {
-        "typescript": "^2.0.3",
-        "vscode": "^1.0.0",
+        "typescript": "^5.9.3",
+        "@types/vscode": "^1.105.0",
+        "vscode-test": "^1.6.1",
         "mocha": "^2.3.3",
-        "@types/node": "^6.0.40",
-        "@types/mocha": "^2.2.32"
+        "@types/mocha": "^2.2.32",
+        "@eslint/js": "^9.13.0",
+        "@stylistic/eslint-plugin": "^2.9.0",
+        "@types/node": "^22",
+        "eslint": "^9.13.0",
+        "typescript-eslint": "^8.26.0"
     }
 }

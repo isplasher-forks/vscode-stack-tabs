@@ -1,2 +1,5 @@
-node_modules
 stackTabs.fla
+out
+node_modules
+.vscode-test/
+*.vsix
