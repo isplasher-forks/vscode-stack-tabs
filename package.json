@@ -1,57 +1,151 @@
 {
-    "name": "stack-tabs",
-    "displayName": "stack-tabs",
-    "description": "Keeps the most used tabs on the far left.",
-    "version": "0.1.0",
-    "publisher": "isplasher",
-    "author": {
-        "name": "iSplasher"
-    },
-    "icon": "icon.png",
-    "license": "MIT",
-    "engines": {
-        "vscode": "^1.11.0"
-    },
-    "repository": {
-        "url": "https://github.com/isplasher-forks/vscode-stack-tabs.git",
-        "type": "git"
-    },
-    "bugs": {
-        "url": "https://github.com/isplasher-forks/vscode-stack-tabs/issues"
-    },
-    "categories": [
-        "Other"
-    ],
-    "activationEvents": [
-        "*"
-    ],
-    "main": "./out/extension.js",
-    "contributes": {
-        "commands": [{
-            "command": "stackTabs.stackTab",
-            "title": "StackTabs: Move tab to the far left"
+  "name": "stack-tabs",
+  "displayName": "Stack Tabs",
+  "description": "Keeps the most used tabs on the far left.",
+  "version": "0.1.0",
+  "publisher": "isplasher",
+  "author": {
+    "name": "iSplasher"
+  },
+  "icon": "icon.png",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.11.0"
+  },
+  "repository": {
+    "url": "https://github.com/isplasher-forks/vscode-stack-tabs.git",
+    "type": "git"
+  },
+  "bugs": {
+    "url": "https://github.com/isplasher-forks/vscode-stack-tabs/issues"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Stack Tabs",
+      "type": "object",
+      "properties": {
+        "stack-tabs.enabled": {
+          "type": "boolean",
+          "scope": "language-overridable",
+          "default": true,
+          "description": "Enable tab stacking."
         },
-        {
-            "command": "isplasher.stackTabs.stackTab",
-            "title": "StackTabs: Move tab to the far left"
-        }]
+        "stack-tabs.debug": {
+          "type": "boolean",
+          "scope": "application",
+          "default": false,
+          "description": "Enable debug logging for Stack Tabs."
+        },
+        "stack-tabs.blockMoveFilters": {
+          "type": "array",
+          "scope": "language-overridable",
+          "items": {
+            "type": "string",
+            "enum": [
+              "pinned",
+              "dirty",
+              "preview",
+              "untitled",
+              "text",
+              "diff",
+              "notebook",
+              "notebook_diff",
+              "webview",
+              "terminal",
+              "title:<glob_pattern>",
+              "path:<glob_pattern>",
+              "lang:<glob_pattern>"
+            ],
+            "markdownEnumDescriptions": [
+              "Don't move past pinned tabs.",
+              "Don't move past dirty (unsaved) tabs.",
+              "Don't move past preview tabs.",
+              "Don't move past untitled tabs.",
+              "Don't move past text editor tabs.",
+              "Don't move past diff editor tabs.",
+              "Don't move past notebook editor tabs.",
+              "Don't move past notebook diff editor tabs.",
+              "Don't move past webview tabs.",
+              "Don't move past terminal tabs.",
+              "Don't move past tabs with titles matching the given glob pattern. E.g. `title:README*`",
+              "Don't move past tabs with paths matching the given glob pattern. E.g. `path:src/**`",
+              "Don't move past tabs with languages matching the given glob pattern. E.g. `lang:typescript`"
+            ]
+          },
+          "additionalItems": {
+            "type": "string",
+            "pattern": "^(title:.+|path:.+|lang:.+)$",
+            "patternErrorMessage": "Custom filters must start with 'title:', 'path:', or 'lang:'."
+          },
+          "editPresentation": "singlelineText",
+          "default": [
+            "pinned"
+          ],
+          "description": "Filters to apply when determining if a tab can block further movement. Note that for custom filters, please edit the setting in JSON directly."
+        },
+        "stack-tabs.direction": {
+          "type": "string",
+          "scope": "language-overridable",
+          "default": "auto",
+          "description": "Direction to move tabs when stacking.",
+          "enum": [
+            "left",
+            "right",
+            "auto"
+          ],
+          "enumDescriptions": [
+            "Move tabs to the left edge.",
+            "Move tabs to the right edge.",
+            "Use default direction"
+          ],
+          "editPresentation": "singlelineText"
+        },
+        "stack-tabs.padding": {
+          "type": "number",
+          "scope": "language-overridable",
+          "default": 0,
+          "description": "Number of tabs to keep as padding from the edge when stacking."
+        }
+      }
     },
-    "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "lint": "eslint",
-        "watch": "tsc -watch -p ./"
-    },
-    "devDependencies": {
-        "typescript": "^5.9.3",
-        "@types/vscode": "^1.105.0",
-        "vscode-test": "^1.6.1",
-        "mocha": "^2.3.3",
-        "@types/mocha": "^2.2.32",
-        "@eslint/js": "^9.13.0",
-        "@stylistic/eslint-plugin": "^2.9.0",
-        "@types/node": "^22",
-        "eslint": "^9.13.0",
-        "typescript-eslint": "^8.26.0"
-    }
+    "commands": [
+      {
+        "command": "stackTabs.stackTab",
+        "title": "StackTabs: Move tab to the edge"
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "npm run check-types && node esbuild.js",
+    "check-types": "tsc --noEmit",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "vscode:prepublish": "npm run package",
+    "package": "npm run check-types && node esbuild.js --production"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "@stylistic/eslint-plugin": "^2.9.0",
+    "@types/micromatch": "^4.0.10",
+    "@types/mocha": "^2.2.32",
+    "@types/node": "^22",
+    "@types/vscode": "^1.105.0",
+    "esbuild": "^0.25.11",
+    "eslint": "^9.13.0",
+    "mocha": "^2.3.3",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.26.0",
+    "vscode-test": "^1.6.1"
+  },
+  "dependencies": {
+    "micromatch": "^4.0.8"
+  }
 }
